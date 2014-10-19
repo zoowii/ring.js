@@ -9,11 +9,23 @@ git submodule update
 * underscore.js
 * [any-route.js](https://github.com/zoowii/any-route.js)
 
+## features
+
+* 基本的handler/middleware/adapter/request/response结构定义和demo
+* 路由 middleware
+* session middleware(TODO)
+* cookies middleware(TODO)
+* file/resource middleware(TODO)
+* basic-auth middleware(TODO)
+* stream support(TODO)
+* websocket middleware(TODO)
+
 ## TODO
 
-* 建立基本的middlewares,比如route, session, file, cookies等等
+* 建立基本的middlewares,比如session, file, cookies等等
 * 支持文件和流
 * 测试
+* 底层使用C++ addon,尝试加快性能
 
 ## 概念
 ring.js包括handler, middleware, adapter, request, response这些对象的概念
