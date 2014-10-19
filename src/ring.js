@@ -21,13 +21,13 @@ function createRingRequestFromHttpRequest(httpReq) {
         httpReq.on('end', function () {
             fulFill.call(req, 'end', chunk);
         });
-    }, req);
+    }, this);
     var req = {
         upgrade: httpReq.upgrade,
         server_port: 3000, // TODO
         server_name: 'localhost', // TODO
         remote_addr: 'localhost', // TODO
-        uri: httpReq.pathname,
+        uri: urlParts.pathname,
         query_string: urlParts.query,
         scheme: 'http', // TODO
         http_version: httpReq.httpVersion,
@@ -48,6 +48,14 @@ function Stream() {
 
 function isString(obj) {
     return typeof(obj) === 'string';
+}
+
+function makeStringRingResponse(str) {
+    return {
+        status: 200,
+        headers: {'Content-Type': 'text/plain'},
+        body: str
+    };
 }
 
 function sendRingResponseBodyToHttpResponse(body, httpRes) {
@@ -98,18 +106,28 @@ var httpAdapter = function (handler, options) {
         host: '127.0.0.1',
         scheme: 'http',
         debug: false,
-        onStart: function () {
-        }
     }, options);
     var server = http.createServer(function (httpReq, httpRes) {
         var req = createRingRequestFromHttpRequest(httpReq);
         var res = handler(req);
+        if (isString(res)) {
+            res = makeStringRingResponse(res);
+        }
         sendRingResponseToHttpResponse(res, httpRes);
         //httpRes.writeHead(200, {'Content-Type': 'text/plain'});
         //httpRes.end('hi');
     });
-    server.listen(options.port, options.host, options.onStart);
+    return {
+        start: function (callback) {
+            callback = callback || function () {
+            };
+            server.listen(options.port, options.host, callback);
+        }
+    };
 };
 
 exports.httpAdapter = httpAdapter;
 exports.helloHandler = helloHandler;
+exports.Stream = Stream;
+exports.isString = isString;
+exports.makeStringRingResponse = makeStringRingResponse;

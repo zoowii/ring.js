@@ -2,6 +2,13 @@ ring.js
 ====
 ring.js is a Ring like framework of JavaScript. It can be base of Web framework.
 
+## dependencies
+
+git submodule update
+
+* underscore.js
+* [any-route.js](https://github.com/zoowii/any-route.js)
+
 ## TODO
 
 * 建立基本的middlewares,比如route, session, file, cookies等等

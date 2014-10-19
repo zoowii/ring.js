@@ -1,22 +1,39 @@
+var http_route = require('./any-route/http')
+    , _ = require('./underscore')
+    , ring = require('./ring');
 /**
  * TODO
  * 路由中间件
  * @param handler
- * @param routesTable 路由表,格式如下:
- * [
- *   {
- *     context: (optional, string), // 如果有,表示这是一个context路由,
- *     routes: (optional, array), // 在context有的情况下奇效
- *     method: (required, string/array/'*'),
- *     pattern: (required, string),
- *     defaults: (optional, map, default params in pattern)
- *   },
- *   ...
- * ]
+ * @param routes 路由表,格式参数any-route. routes中的handler是js函数,第一个参数是request,后面参数是路由匹配的参数值,同时request中增加路由结果
  */
-function routesMiddleware(handler, routesTable) {
-
-}
+exports.routesMiddleware = function (handler, routes) {
+    return function (req) {
+        var uri = req.uri;
+        var method = req.request_method;
+        var reverseResult = http_route.findRoute(routes, method, uri);
+        if (!reverseResult) {
+            return handler(req);
+        }
+        req.routeResult = reverseResult;
+        req.routeBinding = reverseResult.binding;
+        req.routePattern = reverseResult.route;
+        req.routeParams = reverseResult.routeParams;
+        console.log(uri, method, reverseResult);
+        var routeHandler = reverseResult.handler;
+        if (ring.isString(routeHandler)) {
+            return ring.makeStringRingResponse(routeHandler);
+        } else if (_.isFunction(routeHandler)) {
+            var args = _.map(reverseResult.binding, function (binding) {
+                return binding[1];
+            });
+            args.unshift(req);
+            return routeHandler.apply(this, args);
+        } else {
+            throw new Error("unknown type of route handler" + routeHandler);
+        }
+    };
+};
 
 /**
  * TODO
@@ -25,7 +42,7 @@ function routesMiddleware(handler, routesTable) {
  * @param algorithm encode/decode的算法
  */
 function cookiesMiddleware(handler, algorithm) {
-
+    return handler;
 }
 
 /**
@@ -35,7 +52,7 @@ function cookiesMiddleware(handler, algorithm) {
  * @param rootPath
  */
 function resourceMiddleware(handler, rootPath) {
-
+    return handler;
 }
 
 /**
@@ -44,7 +61,7 @@ function resourceMiddleware(handler, rootPath) {
  * @param handler
  */
 function paramsMiddleware(handler) {
-
+    return handler;
 }
 
 /**
@@ -53,7 +70,7 @@ function paramsMiddleware(handler) {
  * @param handler
  */
 function flashMiddleware(handler) {
-
+    return handler;
 }
 
 /**
@@ -62,7 +79,7 @@ function flashMiddleware(handler) {
  * @param handler
  */
 function websocketMiddleware(handler) {
-
+    return handler;
 }
 
 /**
@@ -71,5 +88,5 @@ function websocketMiddleware(handler) {
  * @param handler
  */
 function headRequestMiddleware(handler) {
-
+    return handler;
 }

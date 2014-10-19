@@ -1,0 +1,3 @@
+[submodule "src/any-route"]
+	path = src/any-route
+	url = https://github.com/zoowii/any-route.js.git
