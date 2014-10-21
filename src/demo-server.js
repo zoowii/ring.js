@@ -15,16 +15,22 @@ function helloHandler(req, name) {
     return 'hello, ' + name;
 }
 
+function fileTestHandler(req, path) {
+    return new ring.FileStream('/Users/zoowii/SystemVersion.plist');
+}
+
 app = ringMiddlewares.routesMiddleware(app, defroutes(
     GET('/', 'index', 'index'),
     GET('/hello/:name', helloHandler),
     GET("/test/:id/update", "test-handler", "test"),
+    GET('/test/file/:*path', fileTestHandler, 'file-test'),
     context("/user", [
         GET("/:id/view/:project/:*path", "view_user_handler", "view_user"),
         POST("/:id/view/:project/:*path", "update_user_handler", "update_user")
     ]),
     ANY("/:*path", '404-handler', '404')
 ));
+app = ringMiddlewares.resourceMiddleware(app, '/static', __dirname);
 var server = httpAdapter(app, {
     port: 3000
 });

@@ -1,6 +1,7 @@
 var http_route = require('./any-route/http')
     , _ = require('./underscore')
-    , ring = require('./ring');
+    , ring = require('./ring')
+    , nodePath = require('path');
 /**
  * TODO
  * 路由中间件
@@ -47,13 +48,35 @@ function cookiesMiddleware(handler, algorithm) {
 
 /**
  * TODO
- * 静态文件中间件,可以把rootPath下的文件作为静态文件返回
+ * 文件中间件,增加对文件的回复的支持
  * @param handler
  * @param rootPath
+ * @returns {*}
  */
-function resourceMiddleware(handler, rootPath) {
-    return handler;
+function fileMiddleware(handler) {
+
 }
+
+/**
+ * TODO
+ * 静态文件中间件,可以把rootPath下的文件作为静态文件返回
+ * @param handler
+ * @param rootUri
+ * @param rootPath
+ */
+exports.resourceMiddleware = function (handler, rootUri, rootPath) {
+    return function (req) {
+        var uri = req.uri;
+        if (uri.indexOf(rootUri) >= 0) {
+            var subUri = uri.substring(uri.indexOf(rootUri) + rootUri.length);
+            var path = nodePath.join(rootPath, subUri);
+            console.log(path);
+            return new ring.File(path);
+        } else {
+            return handler(req);
+        }
+    };
+};
 
 /**
  * TODO

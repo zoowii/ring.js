@@ -15,15 +15,14 @@ git submodule update
 * 路由 middleware
 * session middleware(TODO)
 * cookies middleware(TODO)
-* file/resource middleware(TODO)
+* file/resource middleware
 * basic-auth middleware(TODO)
-* stream support(TODO)
+* stream support
 * websocket middleware(TODO)
+* 不同mime-type的文件支持
 
 ## TODO
 
-* 建立基本的middlewares,比如session, file, cookies等等
-* 支持文件和流
 * 测试
 * 底层使用C++ addon,尝试加快性能
 
