@@ -3,7 +3,6 @@ var http_route = require('./any-route/http')
     , ring = require('./ring')
     , nodePath = require('path');
 /**
- * TODO
  * 路由中间件
  * @param handler
  * @param routes 路由表,格式参数any-route. routes中的handler是js函数,第一个参数是request,后面参数是路由匹配的参数值,同时request中增加路由结果
